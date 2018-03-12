@@ -14,12 +14,12 @@ struct edge_struct {
   int trolls;
 };
 
-struct node_struct {
+struct dwarf_struct {
   string name;
   char location;
 };
 
-void readHomes(string filename, vector<node_struct> &nodes);
+void readHomes(string filename, vector<dwarf_struct> &nodes);
 void readMap(string filename, vector<edge_struct> &edges);
 
 #endif

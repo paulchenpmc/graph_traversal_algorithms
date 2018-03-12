@@ -2,21 +2,36 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <algorithm>
 #include "hobbit_reunion.h"
 using namespace std;
 
-void readHomes(string filename, vector<node_struct> &nodes) {
+// Destination is always Bilbo's home at node 'C'
+#define SHIRE 'C'
+#define TARGET_NAME "Bilbo"
+
+void readHomes(string filename, vector<dwarf_struct> &dwarves) {
   ifstream infile(filename);
   if (!infile.is_open()) return;
-  string token;
-  node_struct ns;
-  while (infile >> token) {
-    ns.name = token;
+  string name;
+  vector<string> namesvec;
+  while (infile >> name) {
     char city;
+    if (name == string(TARGET_NAME)) {
+      infile >> city;
+      continue;
+    }
     infile >> city;
-    ns.location = city;
-    // cout << ns.name << ns.location << endl;
-    nodes.push_back(ns);
+    name += city;
+    namesvec.push_back(name);
+  }
+  // Sort alphabetically
+  sort(namesvec.begin(), namesvec.end());
+  dwarf_struct dwarf;
+  for (string &s : namesvec) {
+    dwarf.name = s.substr(0, s.length()-1);
+    dwarf.location = s.substr(s.length()-1, 1).c_str()[0];
+    // cout << dwarf.name << " " << dwarf.location << endl;
   }
 }
 
@@ -43,11 +58,19 @@ void readMap(string filename, vector<edge_struct> &edges) {
   }
 }
 
+void shortestHopPath() {
+
+}
+
 int main() {
-  vector<node_struct> nodes;
+  // Initialize data structures
+  vector<dwarf_struct> dwarves;
   vector<edge_struct> edges;
 
-  readHomes("canadahomes.txt", nodes);
+  // Read input files
+  readHomes("canadahomes.txt", dwarves);
   readMap("canadamap.txt", edges);
-  // cout << output << endl;
+
+  // Apply routing algorithms
+
 }
