@@ -19,8 +19,8 @@ struct dwarf_struct {
   char location;
 };
 
-void readHomes(string filename, vector<dwarf_struct> &nodes);
-void readMap(string filename, vector<edge_struct> &edges);
-void createAdjacencyMatrix(vector<edge_struct> &edges);
+void readHomes(string filename);
+void readMap(string filename);
+void createAdjacencyMatrix();
 
 #endif
