@@ -9,7 +9,7 @@
 using namespace std;
 
 // Destination is always Bilbo's home at node 'C'
-#define SHIRE 'C'
+#define TARGET_LOCATION 'C'  // Shire
 #define TARGET_NAME "Bilbo"
 #define MAX_ROW 26
 #define MAX_COL 26
@@ -120,8 +120,11 @@ int printSolution(int distances[], int n){
     }
 }
 
+// A utility function to find the vertex with minimum distance value, from
+// the set of vertices not yet included in shortest path tree
 int minDist(int distances[], bool sptSet[]){
-   int min = INT_MAX, min_index;
+   int min = INT_MAX;
+   int min_index;
    for (int v = 0; v < MAX_ROW; v++)
      if (sptSet[v] == false && distances[v] <= min)
          min = distances[v], min_index = v;
@@ -129,80 +132,43 @@ int minDist(int distances[], bool sptSet[]){
 }
 
 void shortestHopPath() {
-  int src = SHIRE - 'A';
-  int distances[MAX_ROW];     // The output array.  distances[i] will hold the shortest distance from src to i
-  bool sptSet[MAX_ROW]; // sptSet[i] will true if vertex i is included in shortest path tree or shortest distance from src to i is finalized
-  // Initialize all distances as INFINITE and stpSet[] as false
-  for (int i = 0; i < MAX_ROW; i++)
+  // Find min dist of all nodes from source
+  int src = TARGET_LOCATION - 'A';
+  int distances[MAX_ROW];
+  bool sptSet[MAX_ROW];
+  for (int i = 0; i < MAX_ROW; i++) {
     distances[i] = INT_MAX, sptSet[i] = false;
-
-  // Distance of source vertex from itself is always 0
+  }
   distances[src] = 0;
-
-  // Find shortest path for all vertices
-  for (int count = 0; count < MAX_ROW-1; count++)
-  {
-   // Pick the minimum distance vertex from the set of vertices not yet processed. u is always equal to src in first iteration.
-   int u = minDist(distances, sptSet);
-
-   // Mark the picked vertex as processed
-   sptSet[u] = true;
-
-   // Update dist value of the adjacent vertices of the picked vertex.
-   for (int v = 0; v < MAX_ROW; v++)
-
-     // Update distances[v] only if is not in sptSet, there is an edge from
-     // u to v, and total weight of path from src to  v through u is
-     // smaller than current value of distances[v]
-     if (!sptSet[v] && adjacencyMat[u][v] && distances[u] != INT_MAX && distances[u]+adjacencyMat[u][v] < distances[v])
+  for (int c=0; c < MAX_ROW-1; c++) {
+    int u = minDist(distances, sptSet);
+    sptSet[u] = true;
+    for (int v = 0; v < MAX_ROW; v++) {
+      if (!sptSet[v] && adjacencyMat[u][v] && distances[u] != INT_MAX
+        && distances[u]+adjacencyMat[u][v] < distances[v]) {
         distances[v] = distances[u] + adjacencyMat[u][v];
-     }
+      }
+    }
+  }
+  // printSolution(distances, MAX_ROW);
 
-     // print the constructed distance array
-     printSolution(distances, MAX_ROW);
+  // Now use DFS to find path matching min dist
+  DFS(distances, MAX_ROW);
 }
 
-// Delete and recopy from SHP later
+void BFS(int * distances, int n) {
+
+}
+
+
+
+
+
+
+
 void shortestDistancePath() {
-  int src = SHIRE - 'A';
-  int distances[MAX_ROW];     // The output array.  distances[i] will hold the shortest distance from src to i
-  bool sptSet[MAX_ROW]; // sptSet[i] will true if vertex i is included in shortest path tree or shortest distance from src to i is finalized
-  // Initialize all distances as INFINITE and stpSet[] as false
-  for (int i = 0; i < MAX_ROW; i++)
-    distances[i] = INT_MAX, sptSet[i] = false;
 
-  // Distance of source vertex from itself is always 0
-  distances[src] = 0;
-
-  // Find shortest path for all vertices
-  for (int count = 0; count < MAX_ROW-1; count++)
-  {
-   // Pick the minimum distance vertex from the set of vertices not yet processed. u is always equal to src in first iteration.
-   int u = minDist(distances, sptSet);
-
-   // Mark the picked vertex as processed
-   sptSet[u] = true;
-
-   // Update dist value of the adjacent vertices of the picked vertex.
-   for (int v = 0; v < MAX_ROW; v++)
-
-     // Update distances[v] only if is not in sptSet, there is an edge from
-     // u to v, and total weight of path from src to  v through u is
-     // smaller than current value of distances[v]
-     if (!sptSet[v] && distanceMat[u][v] && distances[u] != INT_MAX && distances[u]+distanceMat[u][v] < distances[v])
-        distances[v] = distances[u] + distanceMat[u][v];
-     }
-
-     // print the constructed distance array
-     printSolution(distances, MAX_ROW);
 }
-
-
-
-
-
-
-
 
 void shortestTimePath() {
   // Placeholder
@@ -216,7 +182,7 @@ void fewestTrollsPath() {
 
 int main() {
   cout << "Starting program..." << endl;
-  
+
   // Read input files
   readHomes("canadahomes.txt");
   readMap("canadamap.txt");
