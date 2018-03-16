@@ -15,8 +15,8 @@ using namespace std;
 #define MAX_COL 26
 
 // Global variables
-vector<dwarf_struct> dwarves;
-vector<edge_struct> edges;
+vector<dwarf_struct> dwarvesvec;
+vector<edge_struct> edgesvec;
 int adjacencyMat[MAX_ROW][MAX_COL];
 int distanceMat[MAX_ROW][MAX_COL];
 int traveltimeMat[MAX_ROW][MAX_COL];
@@ -47,7 +47,7 @@ void readHomes(string filename) {
     dwarf.name = s.substr(0, s.length()-1);
     dwarf.location = s.substr(s.length()-1, 1).c_str()[0];
     // cout << dwarf.name << " " << dwarf.location << endl;
-    dwarves.push_back(dwarf);
+    dwarvesvec.push_back(dwarf);
   }
   infile.close();
 }
@@ -71,14 +71,14 @@ void readMap(string filename) {
     infile >> numtoken;
     es.trolls = numtoken;
     // cout << es.location1 << es.location2 << es.distance << es.traveltime << es.magicalcoins << es.trolls << endl;
-    edges.push_back(es);
+    edgesvec.push_back(es);
   }
   infile.close();
 }
 
 // Reads data into global adjacency matrix data structures
 void createAdjacencyMatrix() {
-  for (edge_struct &e : edges) {
+  for (edge_struct &e : edgesvec) {
     int node1 = e.location1 - 'A';
     int node2 = e.location2 - 'A';
 
@@ -113,15 +113,13 @@ void printAdjacencyMatrix() {
 }
 
 int printSolution(int distances[], int n){
-   printf("Vertex   Distance from Source\n");
-   for (int i = 0; i < MAX_ROW; i++) {
-     if (distances[i] == INT_MAX) continue;
-      printf("%c \t\t %d\n", i+'A', distances[i]);
-    }
+  printf("Vertex   Distance from Source\n");
+  for (int i = 0; i < MAX_ROW; i++) {
+   if (distances[i] == INT_MAX) continue;
+    printf("%c \t\t %d\n", i+'A', distances[i]);
+  }
 }
 
-// A utility function to find the vertex with minimum distance value, from
-// the set of vertices not yet included in shortest path tree
 int minDist(int distances[], bool sptSet[]){
    int min = INT_MAX;
    int min_index;
@@ -136,6 +134,8 @@ void shortestHopPath() {
   int src = TARGET_LOCATION - 'A';
   int distances[MAX_ROW];
   bool sptSet[MAX_ROW];
+  string pathArray[MAX_ROW];
+
   for (int i = 0; i < MAX_ROW; i++) {
     distances[i] = INT_MAX, sptSet[i] = false;
   }
@@ -147,17 +147,16 @@ void shortestHopPath() {
       if (!sptSet[v] && adjacencyMat[u][v] && distances[u] != INT_MAX
         && distances[u]+adjacencyMat[u][v] < distances[v]) {
         distances[v] = distances[u] + adjacencyMat[u][v];
+        pathArray[v] += string(1, (char)(u+'A'));
+        pathArray[v] += pathArray[u];
       }
     }
   }
   // printSolution(distances, MAX_ROW);
-
-  // Now use DFS to find path matching min dist
-  DFS(distances, MAX_ROW);
-}
-
-void BFS(int * distances, int n) {
-
+  for (int i = 0; i < MAX_ROW; i++) {
+    if (pathArray[i] == string("")) continue;
+    cout << "Origin: " << (char)(i+'A') << " path: " << pathArray[i] << endl;
+  }
 }
 
 
@@ -165,6 +164,20 @@ void BFS(int * distances, int n) {
 
 
 
+// void SHP() {
+//   for (dwarf_struct dwarf : dwarvesvec) {
+//     int start = dwarf.location - 'A';
+//     int currentnode = start;
+//     cout << "start node: " << (char)(start+'A') << endl;
+//     bool visited[MAX_ROW];
+//     for (int adjacent = 0; adjacent < MAX_ROW; adjacent++) {
+//       if (!adjacencyMat[currentnode][adjacent]) continue;
+//       cout << (char)(adjacent+'A') << " ";
+//
+//     }
+//     break;
+//   }
+// }
 
 void shortestDistancePath() {
 
