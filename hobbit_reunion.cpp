@@ -148,6 +148,7 @@ void shortestHopPath() {
   int timeArray[MAX_ROW] = {0};
   int goldArray[MAX_ROW] = {0};
   int trollsArray[MAX_ROW] = {0};
+  int predArray[MAX_ROW] = {TARGET_LOCATION - 'A'};
 
   for (int i = 0; i < MAX_ROW; i++) {
     hopsArray[i] = INFINITY;
@@ -165,10 +166,18 @@ void shortestHopPath() {
         timeArray[v] = timeArray[u] + traveltimeMat[u][v];
         goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
         trollsArray[v] = trollsArray[u] + trollsMat[u][v];
-        pathArray[v] += string(1, (char)(u+'A'));
-        pathArray[v] += pathArray[u];
+        predArray[v] = u;
       }
     }
+  }
+  // Calculate routing paths
+  for (dwarf_struct d : dwarvesvec) {
+    int index = d.location - 'A';
+    int j = index;
+    do {
+      j = predArray[j];
+      pathArray[index] += string(1, (char)(j+'A'));
+    } while (j + 'A' != TARGET_LOCATION);
   }
   printRoutingInfo("Shortest Hop Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
@@ -182,6 +191,7 @@ void shortestDistancePath() {
   int timeArray[MAX_ROW] = {0};
   int goldArray[MAX_ROW] = {0};
   int trollsArray[MAX_ROW] = {0};
+  int predArray[MAX_ROW] = {TARGET_LOCATION - 'A'};
 
   for (int i = 0; i < MAX_ROW; i++) {
     distArray[i] = INFINITY;
@@ -199,10 +209,18 @@ void shortestDistancePath() {
         timeArray[v] = timeArray[u] + traveltimeMat[u][v];
         goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
         trollsArray[v] = trollsArray[u] + trollsMat[u][v];
-        pathArray[v] += string(1, (char)(u+'A'));
-        pathArray[v] += pathArray[u];
+        predArray[v] = u;
       }
     }
+  }
+  // Calculate routing paths
+  for (dwarf_struct d : dwarvesvec) {
+    int index = d.location - 'A';
+    int j = index;
+    do {
+      j = predArray[j];
+      pathArray[index] += string(1, (char)(j+'A'));
+    } while (j + 'A' != TARGET_LOCATION);
   }
   printRoutingInfo("Shortest Distance Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
@@ -216,6 +234,7 @@ void shortestTimePath() {
   int timeArray[MAX_ROW] = {0};
   int goldArray[MAX_ROW] = {0};
   int trollsArray[MAX_ROW] = {0};
+  int predArray[MAX_ROW] = {TARGET_LOCATION - 'A'};
 
   for (int i = 0; i < MAX_ROW; i++) {
     timeArray[i] = INFINITY;
@@ -233,10 +252,18 @@ void shortestTimePath() {
         timeArray[v] = timeArray[u] + traveltimeMat[u][v];
         goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
         trollsArray[v] = trollsArray[u] + trollsMat[u][v];
-        pathArray[v] += string(1, (char)(u+'A'));
-        pathArray[v] += pathArray[u];
+        predArray[v] = u;
       }
     }
+  }
+  // Calculate routing paths
+  for (dwarf_struct d : dwarvesvec) {
+    int index = d.location - 'A';
+    int j = index;
+    do {
+      j = predArray[j];
+      pathArray[index] += string(1, (char)(j+'A'));
+    } while (j + 'A' != TARGET_LOCATION);
   }
   printRoutingInfo("Shortest Time Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
@@ -250,6 +277,7 @@ void fewestTrollsPath() {
   int timeArray[MAX_ROW] = {0};
   int goldArray[MAX_ROW] = {0};
   int trollsArray[MAX_ROW] = {0};
+  int predArray[MAX_ROW] = {TARGET_LOCATION - 'A'};
 
   for (int i = 0; i < MAX_ROW; i++) {
     trollsArray[i] = INFINITY;
@@ -267,10 +295,18 @@ void fewestTrollsPath() {
         timeArray[v] = timeArray[u] + traveltimeMat[u][v];
         goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
         trollsArray[v] = trollsArray[u] + trollsMat[u][v];
-        pathArray[v] += string(1, (char)(u+'A'));
-        pathArray[v] += pathArray[u];
+        predArray[v] = u;
       }
     }
+  }
+  // Calculate routing paths
+  for (dwarf_struct d : dwarvesvec) {
+    int index = d.location - 'A';
+    int j = index;
+    do {
+      j = predArray[j];
+      pathArray[index] += string(1, (char)(j+'A'));
+    } while (j + 'A' != TARGET_LOCATION);
   }
   printRoutingInfo("Fewest Trolls Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
