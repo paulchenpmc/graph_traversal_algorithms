@@ -1,10 +1,8 @@
 #include <iostream>
 #include <string>
-#include <fstream>
+#include <fstream> // for file IO
+#include <algorithm> // for sort algorithm
 #include <vector>
-#include <algorithm>
-#include <queue>
-#include <limits.h>
 #include "hobbit_reunion.h"
 using namespace std;
 
@@ -13,6 +11,7 @@ using namespace std;
 #define TARGET_NAME "Bilbo"
 #define MAX_ROW 26
 #define MAX_COL 26
+#define INFINITY 1000000000
 
 // Global variables
 vector<dwarf_struct> dwarvesvec;
@@ -105,23 +104,34 @@ void printAdjacencyMatrix() {
   for (int r = 0; r < MAX_ROW; r++) {
     cout << (char) (r + 'A') << " ";
     for (int c = 0; c < MAX_COL; c++) {
-      string s = (adjacencyMat[r][c]) ? "1 " : "0 ";
+      string s = (traveltimeMat[r][c]) ? "1 " : "0 ";
       cout << s;
     }
     cout << endl;
   }
 }
 
-int printSolution(int distances[], int n){
-  printf("Vertex   Distance from Source\n");
-  for (int i = 0; i < MAX_ROW; i++) {
-   if (distances[i] == INT_MAX) continue;
-    printf("%c \t\t %d\n", i+'A', distances[i]);
+int printRoutingInfo(const char * algorithm, int hops[],
+  int dist[], int time[], int gold[], int trolls[], string pathArray[]){
+  cout << "\n\n" << algorithm << " Algorithm" << endl;
+  cout << "Dwarf\tHome\tHops\tDist\tTime\tGold\tTrolls\tPath" << endl;
+  cout << "----------------------------------------------------------------" << endl;
+  for (dwarf_struct d : dwarvesvec) {
+    int index = d.location - 'A';
+    cout << d.name << "\t";
+    cout << d.location << "\t";
+    cout << hops[index] << "\t";
+    cout << dist[index] << "\t";
+    cout << time[index] << "\t";
+    cout << gold[index] << "\t";
+    cout << trolls[index] << "\t";
+    cout << d.location << pathArray[index] << endl;
   }
+  cout << "----------------------------------------------------------------" << endl;
 }
 
 int minDist(int distances[], bool sptSet[]){
-   int min = INT_MAX;
+   int min = INFINITY;
    int min_index;
    for (int v = 0; v < MAX_ROW; v++)
      if (sptSet[v] == false && distances[v] <= min)
@@ -130,65 +140,139 @@ int minDist(int distances[], bool sptSet[]){
 }
 
 void shortestHopPath() {
-  // Find min dist of all nodes from source
   int src = TARGET_LOCATION - 'A';
-  int distances[MAX_ROW];
   bool sptSet[MAX_ROW];
   string pathArray[MAX_ROW];
+  int hopsArray[MAX_ROW] = {0};
+  int distArray[MAX_ROW] = {0};
+  int timeArray[MAX_ROW] = {0};
+  int goldArray[MAX_ROW] = {0};
+  int trollsArray[MAX_ROW] = {0};
 
   for (int i = 0; i < MAX_ROW; i++) {
-    distances[i] = INT_MAX, sptSet[i] = false;
+    hopsArray[i] = INFINITY;
+    sptSet[i] = false;
   }
-  distances[src] = 0;
+  hopsArray[src] = 0;
   for (int c=0; c < MAX_ROW-1; c++) {
-    int u = minDist(distances, sptSet);
+    int u = minDist(hopsArray, sptSet);
     sptSet[u] = true;
     for (int v = 0; v < MAX_ROW; v++) {
-      if (!sptSet[v] && adjacencyMat[u][v] && distances[u] != INT_MAX
-        && distances[u]+adjacencyMat[u][v] < distances[v]) {
-        distances[v] = distances[u] + adjacencyMat[u][v];
+      if (!sptSet[v] && adjacencyMat[u][v] && (hopsArray[u] != INFINITY)
+        && (hopsArray[u]+adjacencyMat[u][v] < hopsArray[v])) {
+        hopsArray[v] = hopsArray[u] + adjacencyMat[u][v];
+        distArray[v] = distArray[u] + distanceMat[u][v];
+        timeArray[v] = timeArray[u] + traveltimeMat[u][v];
+        goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
+        trollsArray[v] = trollsArray[u] + trollsMat[u][v];
         pathArray[v] += string(1, (char)(u+'A'));
         pathArray[v] += pathArray[u];
       }
     }
   }
-  // printSolution(distances, MAX_ROW);
-  for (int i = 0; i < MAX_ROW; i++) {
-    if (pathArray[i] == string("")) continue;
-    cout << "Origin: " << (char)(i+'A') << " path: " << pathArray[i] << endl;
-  }
+  printRoutingInfo("Shortest Hop Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
 
-
-
-
-
-
-// void SHP() {
-//   for (dwarf_struct dwarf : dwarvesvec) {
-//     int start = dwarf.location - 'A';
-//     int currentnode = start;
-//     cout << "start node: " << (char)(start+'A') << endl;
-//     bool visited[MAX_ROW];
-//     for (int adjacent = 0; adjacent < MAX_ROW; adjacent++) {
-//       if (!adjacencyMat[currentnode][adjacent]) continue;
-//       cout << (char)(adjacent+'A') << " ";
-//
-//     }
-//     break;
-//   }
-// }
-
 void shortestDistancePath() {
+  int src = TARGET_LOCATION - 'A';
+  bool sptSet[MAX_ROW];
+  string pathArray[MAX_ROW];
+  int hopsArray[MAX_ROW] = {0};
+  int distArray[MAX_ROW] = {0};
+  int timeArray[MAX_ROW] = {0};
+  int goldArray[MAX_ROW] = {0};
+  int trollsArray[MAX_ROW] = {0};
 
+  for (int i = 0; i < MAX_ROW; i++) {
+    distArray[i] = INFINITY;
+    sptSet[i] = false;
+  }
+  distArray[src] = 0;
+  for (int c=0; c < MAX_ROW-1; c++) {
+    int u = minDist(distArray, sptSet);
+    sptSet[u] = true;
+    for (int v = 0; v < MAX_ROW; v++) {
+      if (!sptSet[v] && distanceMat[u][v] && (distArray[u] != INFINITY)
+        && (distArray[u]+distanceMat[u][v] < distArray[v])) {
+        hopsArray[v] = hopsArray[u] + adjacencyMat[u][v];
+        distArray[v] = distArray[u] + distanceMat[u][v];
+        timeArray[v] = timeArray[u] + traveltimeMat[u][v];
+        goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
+        trollsArray[v] = trollsArray[u] + trollsMat[u][v];
+        pathArray[v] += string(1, (char)(u+'A'));
+        pathArray[v] += pathArray[u];
+      }
+    }
+  }
+  printRoutingInfo("Shortest Distance Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
 
 void shortestTimePath() {
-  // Placeholder
+  int src = TARGET_LOCATION - 'A';
+  bool sptSet[MAX_ROW];
+  string pathArray[MAX_ROW];
+  int hopsArray[MAX_ROW] = {0};
+  int distArray[MAX_ROW] = {0};
+  int timeArray[MAX_ROW] = {0};
+  int goldArray[MAX_ROW] = {0};
+  int trollsArray[MAX_ROW] = {0};
+
+  for (int i = 0; i < MAX_ROW; i++) {
+    timeArray[i] = INFINITY;
+    sptSet[i] = false;
+  }
+  timeArray[src] = 0;
+  for (int c=0; c < MAX_ROW-1; c++) {
+    int u = minDist(timeArray, sptSet);
+    sptSet[u] = true;
+    for (int v = 0; v < MAX_ROW; v++) {
+      if (!sptSet[v] && traveltimeMat[u][v] && (timeArray[u] != INFINITY)
+        && (timeArray[u]+traveltimeMat[u][v] < timeArray[v])) {
+        hopsArray[v] = hopsArray[u] + adjacencyMat[u][v];
+        distArray[v] = distArray[u] + distanceMat[u][v];
+        timeArray[v] = timeArray[u] + traveltimeMat[u][v];
+        goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
+        trollsArray[v] = trollsArray[u] + trollsMat[u][v];
+        pathArray[v] += string(1, (char)(u+'A'));
+        pathArray[v] += pathArray[u];
+      }
+    }
+  }
+  printRoutingInfo("Shortest Time Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
 
 void fewestTrollsPath() {
-  // Placeholder
+  int src = TARGET_LOCATION - 'A';
+  bool sptSet[MAX_ROW];
+  string pathArray[MAX_ROW];
+  int hopsArray[MAX_ROW] = {0};
+  int distArray[MAX_ROW] = {0};
+  int timeArray[MAX_ROW] = {0};
+  int goldArray[MAX_ROW] = {0};
+  int trollsArray[MAX_ROW] = {0};
+
+  for (int i = 0; i < MAX_ROW; i++) {
+    trollsArray[i] = INFINITY;
+    sptSet[i] = false;
+  }
+  trollsArray[src] = 0;
+  for (int c=0; c < MAX_ROW-1; c++) {
+    int u = minDist(trollsArray, sptSet);
+    sptSet[u] = true;
+    for (int v = 0; v < MAX_ROW; v++) {
+      if (!sptSet[v] && trollsMat[u][v] && (trollsArray[u] != INFINITY)
+        && (trollsArray[u]+trollsMat[u][v] < trollsArray[v])) {
+        hopsArray[v] = hopsArray[u] + adjacencyMat[u][v];
+        distArray[v] = distArray[u] + distanceMat[u][v];
+        timeArray[v] = timeArray[u] + traveltimeMat[u][v];
+        goldArray[v] = goldArray[u] + magicalcoinsMat[u][v];
+        trollsArray[v] = trollsArray[u] + trollsMat[u][v];
+        pathArray[v] += string(1, (char)(u+'A'));
+        pathArray[v] += pathArray[u];
+      }
+    }
+  }
+  printRoutingInfo("Fewest Trolls Path", hopsArray, distArray, timeArray, goldArray, trollsArray, pathArray);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -210,12 +294,14 @@ int main() {
   shortestHopPath();
   cout << "Successfully ran SHP algorithm" << endl;
 
-  // shortestDistancePath();
-  // cout << "Successfully ran SDP algorithm" << endl;
+  shortestDistancePath();
+  cout << "Successfully ran SDP algorithm" << endl;
 
-  // shortestTimePath();
-  // cout << "Successfully ran STP algorithm" << endl;
+  shortestTimePath();
+  cout << "Successfully ran STP algorithm" << endl;
 
-  // fewestTrollsPath();
-  // cout << "Successfully ran FTP algorithm" << endl;
+  fewestTrollsPath();
+  cout << "Successfully ran FTP algorithm" << endl;
+
+  cout << "Ran all algorithms, exiting..." << endl;
 }
