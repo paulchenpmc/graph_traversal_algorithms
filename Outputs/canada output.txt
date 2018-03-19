@@ -1,0 +1,54 @@
+Shortest Hop Path Algorithm
+Dwarf   Home    Hops    Dist    Time    Gold    Trolls  Path
+----------------------------------------------------------------
+Balin   R       1       400     300     3       4       RC
+Dori    V       1       800     600     5       1       VC
+Dwalin  W       2       1400    960     5       5       WSC
+Gloin   M       4       2400    1700    27      8       MTWSC
+Nori    E       1       300     120     8       2       EC
+Oin     T       3       2200    1460    15      6       TWSC
+Ori     S       1       600     360     4       4       SC
+----------------------------------------------------------------
+Average:        1.86    1157.14 785.71  9.57    4.29
+
+
+Shortest Distance Path Algorithm
+Dwarf   Home    Hops    Dist    Time    Gold    Trolls  Path
+----------------------------------------------------------------
+Balin   R       1       400     300     3       4       RC
+Dori    V       1       800     600     5       1       VC
+Dwalin  W       2       900     660     9       7       WRC
+Gloin   M       4       1900    1400    31      10      MTWRC
+Nori    E       1       300     120     8       2       EC
+Oin     T       3       1700    1160    19      8       TWRC
+Ori     S       1       600     360     4       4       SC
+----------------------------------------------------------------
+Average:        1.86    942.86  657.14  11.29   5.14
+
+
+Shortest Time Path Algorithm
+Dwarf   Home    Hops    Dist    Time    Gold    Trolls  Path
+----------------------------------------------------------------
+Balin   R       1       400     300     3       4       RC
+Dori    V       1       800     600     5       1       VC
+Dwalin  W       2       900     660     9       7       WRC
+Gloin   M       4       1900    1400    31      10      MTWRC
+Nori    E       1       300     120     8       2       EC
+Oin     T       3       1700    1160    19      8       TWRC
+Ori     S       2       700     300     13      3       SEC
+----------------------------------------------------------------
+Average:        2.00    957.14  648.57  12.57   5.00
+
+
+Fewest Trolls Path Algorithm
+Dwarf   Home    Hops    Dist    Time    Gold    Trolls  Path
+----------------------------------------------------------------
+Balin   R       1       400     300     3       4       RC
+Dori    V       1       800     600     5       1       VC
+Dwalin  W       3       1500    900     14      4       WSEC
+Gloin   M       5       2500    1640    36      7       MTWSEC
+Nori    E       1       300     120     8       2       EC
+Oin     T       4       2300    1400    24      5       TWSEC
+Ori     S       2       700     300     13      3       SEC
+----------------------------------------------------------------
+Average:        2.43    1214.29 751.43  14.71   3.71
