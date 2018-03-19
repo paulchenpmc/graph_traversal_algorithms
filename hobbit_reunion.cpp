@@ -1,3 +1,15 @@
+/*
+  This program is a fun attempt to simulate network routing algorithms,
+  specifically Shortest Hop Path, Shortest Distance Path,
+  Shortest Time Path, and Fewest Trolls Path.
+  It employs dijkstra's algorithm to find optimal routing.
+  As seen in the beginning of JRR Tolkien's 'The Hobbit'the dwarves
+  must all gather to meet at the request of Gandalf, who has a detailed
+  map of the Middle-Earth universe and must route them to their meeting
+  location at Bilbo's home in the Shire.
+*/
+
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -316,6 +328,9 @@ void fewestTrollsPath() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int main() {
+  // ASSUMPTIONS:
+  //   Graph is always connected
+  //   Undirected graph
   cout << "Starting Global Dwarf Repositioning System (GDPS)..." << endl;
 
 
