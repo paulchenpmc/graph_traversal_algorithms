@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <fstream> // for file IO
 #include <algorithm> // for sort algorithm
-#include <vector>
 #include "hobbit_reunion.h"
 using namespace std;
 
@@ -331,6 +331,7 @@ int main() {
   }
   cout << "Successfully read home locations file" << endl;
 
+  // Read input files
   while (1) {
     cout << "Enter the filename containing the world map data..." << endl;
     cout << "Format: location1 location2 distance traveltime magicalcoins trolls" << endl;
@@ -351,7 +352,7 @@ int main() {
 
   // Apply routing algorithms
   while (1) {
-    cout << "\n\NEnter the algorithm you would like to route with: (SHP, SDP, STP, FTP, exit)" << endl;
+    cout << "\n\nEnter the algorithm you would like to route with: (SHP, SDP, STP, FTP, exit)" << endl;
     string uin;
     cin >> uin;
 
