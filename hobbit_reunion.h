@@ -19,8 +19,15 @@ struct dwarf_struct {
   char location;
 };
 
-void readHomes(string filename);
-void readMap(string filename);
+int readHomes(string filename);
+int readMap(string filename);
 void createAdjacencyMatrix();
+void printAdjacencyMatrix();
+void printRoutingInfo(const char * algorithm, int hops[], int dist[], int time[], int gold[], int trolls[], string pathArray[]);
+int minDist(int distances[], bool sptSet[]);
+void shortestHopPath();
+void shortestDistancePath();
+void shortestTimePath();
+void fewestTrollsPath();
 
 #endif
