@@ -347,12 +347,12 @@ int main() {
   // Initialize data structures
   createAdjacencyMatrix();
   // printAdjacencyMatrix();
-  cout << "Successfully created adjacency matrix from input files" << endl;
+  cout << "Successfully created adjacency matrix from input files";
 
 
   // Apply routing algorithms
   while (1) {
-    cout << "\n\nEnter the algorithm you would like to route with: (SHP, SDP, STP, FTP, exit)" << endl;
+    cout << "\n\n\nEnter the algorithm you would like to route with: (SHP, SDP, STP, FTP, exit)" << endl;
     string uin;
     cin >> uin;
 
