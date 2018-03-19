@@ -13,16 +13,16 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <iomanip>
 #include <fstream> // for file IO
 #include <algorithm> // for sort algorithm
 #include "hobbit_reunion.h"
 using namespace std;
 
-// Destination is always Bilbo's home at node 'C'
-#define TARGET_LOCATION 'C'  // Shire
+// Destination is always Bilbo's home, determined when reading the input file
 #define TARGET_NAME "Bilbo"
-#define MAX_ROW 26
-#define MAX_COL 26
+#define MAX_ROW 26 // These two numbers should always be the same for adjacency matrix
+#define MAX_COL 26 // These two numbers should always be the same for adjacency matrix
 #define INFINITY 1000000000
 
 // Global variables
@@ -33,6 +33,7 @@ int distanceMat[MAX_ROW][MAX_COL];
 int traveltimeMat[MAX_ROW][MAX_COL];
 int magicalcoinsMat[MAX_ROW][MAX_COL];
 int trollsMat[MAX_ROW][MAX_COL];
+char TARGET_LOCATION; // Associated with TARGET_NAME
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,7 @@ int readHomes(string filename) {
     char city;
     if (name == string(TARGET_NAME)) {
       infile >> city;
+      TARGET_LOCATION = city;
       continue;
     }
     infile >> city;
@@ -130,6 +132,7 @@ void printRoutingInfo(const char * algorithm, int hops[],
   cout << "\n\n" << algorithm << " Algorithm" << endl;
   cout << "Dwarf\tHome\tHops\tDist\tTime\tGold\tTrolls\tPath" << endl;
   cout << "----------------------------------------------------------------" << endl;
+  int avHops=0, avDist=0, avTime=0, avGold=0, avTrolls=0;
   for (dwarf_struct d : dwarvesvec) {
     int index = d.location - 'A';
     cout << d.name << "\t";
@@ -140,8 +143,19 @@ void printRoutingInfo(const char * algorithm, int hops[],
     cout << gold[index] << "\t";
     cout << trolls[index] << "\t";
     cout << d.location << pathArray[index] << endl;
+    avHops += hops[index];
+    avDist += dist[index];
+    avTime += time[index];
+    avGold += gold[index];
+    avTrolls += trolls[index];
   }
   cout << "----------------------------------------------------------------" << endl;
+  cout << "Average:\t";
+  cout << setprecision(2) << fixed << (double)avHops/dwarvesvec.size() << "\t";
+  cout << setprecision(2) << fixed << (double)avDist/dwarvesvec.size() << "\t";
+  cout << setprecision(2) << fixed << (double)avTime/dwarvesvec.size() << "\t";
+  cout << setprecision(2) << fixed << (double)avGold/dwarvesvec.size() << "\t";
+  cout << setprecision(2) << fixed << (double)avTrolls/dwarvesvec.size() << endl;
 }
 
 int minDist(int distances[], bool sptSet[]){
@@ -344,7 +358,7 @@ int main() {
     if (rv) break;
     cout << "Error opening the file, please try again..." << endl;
   }
-  cout << "Successfully read home locations file" << endl;
+  cout << "Successfully read home locations file\n" << endl;
 
   // Read input files
   while (1) {
