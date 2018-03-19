@@ -24,9 +24,9 @@ int trollsMat[MAX_ROW][MAX_COL];
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void readHomes(string filename) {
+int readHomes(string filename) {
   ifstream infile(filename);
-  if (!infile.is_open()) return;
+  if (!infile.is_open()) return 0;
   string name;
   vector<string> namesvec;
   while (infile >> name) {
@@ -49,11 +49,12 @@ void readHomes(string filename) {
     dwarvesvec.push_back(dwarf);
   }
   infile.close();
+  return 1;
 }
 
-void readMap(string filename) {
+int readMap(string filename) {
   ifstream infile(filename);
-  if (!infile.is_open()) return;
+  if (!infile.is_open()) return 0;
   char token;
   edge_struct es;
   while (infile >> token) {
@@ -73,6 +74,7 @@ void readMap(string filename) {
     edgesvec.push_back(es);
   }
   infile.close();
+  return 1;
 }
 
 // Reads data into global adjacency matrix data structures
@@ -111,7 +113,7 @@ void printAdjacencyMatrix() {
   }
 }
 
-int printRoutingInfo(const char * algorithm, int hops[],
+void printRoutingInfo(const char * algorithm, int hops[],
   int dist[], int time[], int gold[], int trolls[], string pathArray[]){
   cout << "\n\n" << algorithm << " Algorithm" << endl;
   cout << "Dwarf\tHome\tHops\tDist\tTime\tGold\tTrolls\tPath" << endl;
@@ -314,30 +316,63 @@ void fewestTrollsPath() {
 ////////////////////////////////////////////////////////////////////////////////
 
 int main() {
-  cout << "Starting program..." << endl;
+  cout << "Starting Global Dwarf Repositioning System (GDPS)..." << endl;
+
 
   // Read input files
-  readHomes("canadahomes.txt");
-  readMap("canadamap.txt");
-  cout << "Successfully read input files" << endl;
+  while (1) {
+    cout << "Enter the filename containing the hobbit/dwarf names and homes..." << endl;
+    cout << "Format: name location" << endl;
+    string h;
+    cin >> h;
+    int rv = readHomes(h);
+    if (rv) break;
+    cout << "Error opening the file, please try again..." << endl;
+  }
+  cout << "Successfully read home locations file" << endl;
+
+  while (1) {
+    cout << "Enter the filename containing the world map data..." << endl;
+    cout << "Format: location1 location2 distance traveltime magicalcoins trolls" << endl;
+    string h;
+    cin >> h;
+    int rv = readMap(h);
+    if (rv) break;
+    cout << "Error opening the file, please try again..." << endl;
+  }
+  cout << "Successfully read map locations file\n" << endl;
+
 
   // Initialize data structures
   createAdjacencyMatrix();
   // printAdjacencyMatrix();
-  cout << "Successfully created adjacency matrix" << endl;
+  cout << "\nSuccessfully created adjacency matrix from input files\n" << endl;
+
 
   // Apply routing algorithms
-  shortestHopPath();
-  cout << "Successfully ran SHP algorithm" << endl;
+  while (1) {
+    cout << "Enter the algorithm you would like to route with: (SHP, SDP, STP, FTP, exit)" << endl;
+    string uin;
+    cin >> uin;
 
-  shortestDistancePath();
-  cout << "Successfully ran SDP algorithm" << endl;
+    if (uin == "SHP") {
+      shortestHopPath();
+      cout << "Finished running SHP algorithm" << endl;
+    } else if (uin == "SDP") {
+      shortestDistancePath();
+      cout << "Finished running SDP algorithm" << endl;
+    } else if (uin == "STP") {
+      shortestTimePath();
+      cout << "Finished running STP algorithm" << endl;
+    } else if (uin == "FTP") {
+      fewestTrollsPath();
+      cout << "Finished running FTP algorithm" << endl;
+    } else if (uin == "exit") {
+      break;
+    } else {
+      cout << "Invalid input..." << endl;
+    }
+  }
 
-  shortestTimePath();
-  cout << "Successfully ran STP algorithm" << endl;
-
-  fewestTrollsPath();
-  cout << "Successfully ran FTP algorithm" << endl;
-
-  cout << "Ran all algorithms, exiting..." << endl;
+  cout << "Algorithm executed successfully, exiting..." << endl;
 }
